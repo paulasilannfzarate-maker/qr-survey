@@ -1,1 +1,534 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Needs Assessment Survey – STI College Bacoor</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --blue:   #003087;
+    --blue2:  #004bb5;
+    --gold:   #f0a500;
+    --light:  #eaf0fb;
+    --border: #c4d3ee;
+    --text:   #12213a;
+    --muted:  #556;
+    --white:  #ffffff;
+    --bg:     #f2f5fc;
+  }
+
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 16px 12px 40px;
+  }
+
+  /* ── PAGE WRAPPER ──────────────────────────────── */
+  .page {
+    max-width: 780px;
+    margin: 0 auto;
+    background: var(--white);
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 6px 32px rgba(0,48,135,.16);
+  }
+
+  /* ── HEADER ────────────────────────────────────── */
+  .hdr {
+    background: var(--blue);
+    color: var(--white);
+    padding: 28px 36px 24px;
+    text-align: center;
+    border-bottom: 5px solid var(--gold);
+    position: relative;
+  }
+  .hdr::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 24px,
+      rgba(255,255,255,.03) 24px,
+      rgba(255,255,255,.03) 48px
+    );
+    pointer-events: none;
+  }
+  .hdr-logo {
+    font-family: 'Arial Black', 'Arial Bold', sans-serif;
+    font-size: clamp(20px, 5vw, 28px);
+    font-weight: 900;
+    letter-spacing: 3px;
+    color: var(--white);
+    position: relative;
+  }
+  .hdr-logo span { color: var(--gold); }
+  .hdr-sub {
+    font-size: 13px;
+    font-weight: bold;
+    margin-top: 10px;
+    line-height: 1.65;
+    position: relative;
+    opacity: .95;
+  }
+  .hdr-sub em {
+    font-style: normal;
+    font-size: 12px;
+    opacity: .8;
+  }
+
+  /* ── BODY CONTENT ──────────────────────────────── */
+  .body { padding: 28px 32px 36px; }
+
+  .intro {
+    font-size: 13px;
+    line-height: 1.75;
+    text-align: justify;
+    color: var(--muted);
+    padding: 14px 16px;
+    background: var(--light);
+    border-left: 4px solid var(--blue);
+    border-radius: 0 4px 4px 0;
+    margin-bottom: 24px;
+  }
+
+  /* ── FIELD GROUP ───────────────────────────────── */
+  .field { margin-bottom: 22px; }
+  .field-label {
+    display: block;
+    font-size: 13px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: var(--blue);
+    text-transform: uppercase;
+    letter-spacing: .5px;
+  }
+  input[type="text"] {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: inherit;
+    background: #fafbff;
+    color: var(--text);
+    transition: border-color .2s;
+  }
+  input[type="text"]:focus {
+    outline: none;
+    border-color: var(--blue2);
+    background: var(--white);
+  }
+
+  /* ── SECTION GRID ──────────────────────────────── */
+  .section-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px 10px;
+  }
+  .sec-opt {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    cursor: pointer;
+    padding: 5px 8px;
+    border: 1.5px solid var(--border);
+    border-radius: 4px;
+    transition: background .15s, border-color .15s;
+    user-select: none;
+  }
+  .sec-opt:hover { background: var(--light); border-color: var(--blue2); }
+  .sec-opt input[type="checkbox"] {
+    width: 14px; height: 14px;
+    accent-color: var(--blue);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .sec-opt.checked { background: var(--light); border-color: var(--blue); font-weight: bold; }
+
+  /* ── PART HEADING ──────────────────────────────── */
+  .part-hdr {
+    background: var(--blue);
+    color: var(--white);
+    padding: 10px 18px;
+    font-size: 13.5px;
+    font-weight: bold;
+    margin: 28px -32px 14px;
+    letter-spacing: .3px;
+  }
+  .direction {
+    font-style: italic;
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .scale-row {
+    font-size: 12.5px;
+    font-weight: bold;
+    color: var(--blue);
+    margin-bottom: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .scale-row span { white-space: nowrap; }
+
+  /* ── SURVEY TABLE ──────────────────────────────── */
+  .survey-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .survey-table thead tr {
+    background: var(--blue);
+    color: var(--white);
+  }
+  .survey-table thead th {
+    padding: 10px 8px;
+    text-align: center;
+    border: 1px solid #002070;
+    font-weight: bold;
+    font-size: 13px;
+  }
+  .survey-table thead th.th-stmt { text-align: left; }
+  .survey-table thead th.th-no  { width: 40px; }
+  .survey-table thead th.th-opt { width: 54px; }
+
+  .survey-table tbody tr { transition: background .12s; }
+  .survey-table tbody tr:nth-child(odd)  { background: var(--white); }
+  .survey-table tbody tr:nth-child(even) { background: var(--light); }
+  .survey-table tbody tr:hover { background: #d4e3fc; }
+
+  .survey-table tbody td {
+    padding: 10px 8px;
+    border: 1px solid var(--border);
+    text-align: center;
+    vertical-align: middle;
+  }
+  .survey-table tbody td.td-no   { font-weight: bold; color: var(--blue); }
+  .survey-table tbody td.td-stmt { text-align: left; line-height: 1.5; }
+  .survey-table tbody td.td-opt  input[type="radio"] {
+    width: 18px; height: 18px;
+    accent-color: var(--blue);
+    cursor: pointer;
+  }
+
+  /* highlighted row for reverse-coded */
+  .survey-table tbody tr.reverse { font-style: italic; }
+  .survey-table tbody tr.reverse td.td-stmt::after {
+    content: ' ⟳';
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  /* ── VALIDATION STATE ──────────────────────────── */
+  .survey-table tbody tr.unanswered td {
+    background: #fff0f0 !important;
+  }
+  .survey-table tbody tr.unanswered td.td-stmt {
+    color: #c0392b;
+  }
+
+  /* ── SUBMIT ────────────────────────────────────── */
+  .submit-section {
+    margin-top: 32px;
+    text-align: center;
+    padding-top: 24px;
+    border-top: 2.5px solid var(--blue);
+  }
+  .btn-submit {
+    background: var(--blue);
+    color: var(--white);
+    border: none;
+    padding: 13px 52px;
+    font-size: 15px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    font-family: 'Arial', sans-serif;
+    transition: background .2s, transform .1s;
+    box-shadow: 0 3px 12px rgba(0,48,135,.3);
+  }
+  .btn-submit:hover  { background: var(--blue2); transform: translateY(-1px); }
+  .btn-submit:active { transform: translateY(0); }
+  .btn-submit:disabled { background: #7f9abf; cursor: not-allowed; transform: none; }
+
+  .footer-note {
+    font-size: 11.5px;
+    color: #8a9ab8;
+    margin-top: 10px;
+    font-style: italic;
+  }
+
+  /* ── THANK-YOU OVERLAY ─────────────────────────── */
+  #thankyou {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 32px;
+    text-align: center;
+    min-height: 340px;
+  }
+  #thankyou .ty-icon {
+    width: 72px; height: 72px;
+    background: var(--blue);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 24px;
+    font-size: 36px;
+  }
+  #thankyou h2 {
+    font-size: 22px;
+    color: var(--blue);
+    margin-bottom: 10px;
+  }
+  #thankyou p {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 380px;
+  }
+  .btn-another {
+    margin-top: 24px;
+    background: transparent;
+    border: 2px solid var(--blue);
+    color: var(--blue);
+    padding: 10px 32px;
+    font-size: 13px;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Arial', sans-serif;
+    letter-spacing: .8px;
+    transition: background .2s, color .2s;
+  }
+  .btn-another:hover { background: var(--blue); color: var(--white); }
+
+  /* ── RESPONSIVE ────────────────────────────────── */
+  @media (max-width: 600px) {
+    .body { padding: 20px 16px 28px; }
+    .part-hdr { margin-left: -16px; margin-right: -16px; }
+    .section-grid { grid-template-columns: repeat(2, 1fr); }
+    .survey-table { font-size: 12px; }
+    .survey-table thead th,
+    .survey-table tbody td { padding: 8px 5px; }
+    .survey-table thead th.th-opt,
+    .survey-table tbody td.td-opt { width: 40px; }
+    .btn-submit { padding: 12px 32px; font-size: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="hdr">
+    <div class="hdr-logo"><span>STI</span> COLLEGE BACOOR</div>
+    <div class="hdr-sub">
+      Needs Assessment Survey<br>
+      QR Code-Based Attendance Monitoring System for Senior High School<br>
+      <em>Student / Class Secretary Form</em>
+    </div>
+  </div>
+
+  <!-- MAIN FORM -->
+  <div class="body">
+
+    <p class="intro">
+      This survey is designed to gather measurable data on the current attendance
+      management practices at STI College Bacoor. All responses will be treated with
+      strict confidentiality and used solely for academic research purposes. Please
+      answer all items honestly and completely.
+    </p>
+
+    <form id="surveyForm" novalidate>
+
+      <!-- NAME -->
+      <div class="field">
+        <label class="field-label" for="name">Name (Optional)</label>
+        <input type="text" id="name" name="name" placeholder="Leave blank to stay anonymous">
+      </div>
+
+      <!-- SECTION -->
+      <div class="field">
+        <label class="field-label">Section</label>
+        <div class="section-grid" id="sectionGrid">
+          <!-- JS will populate -->
+        </div>
+      </div>
+
+      <!-- PART I -->
+      <div class="part-hdr">PART I — Attendance Experience &amp; Perceived Need for QR-Based System</div>
+      <p class="direction">Direction: Place a check mark (✓) in the column that best represents your level of agreement.</p>
+      <div class="scale-row">
+        <span>4 – Strongly Agree</span>
+        <span>3 – Agree</span>
+        <span>2 – Disagree</span>
+        <span>1 – Strongly Disagree</span>
+      </div>
+
+      <table class="survey-table" id="surveyTable">
+        <thead>
+          <tr>
+            <th class="th-no">No.</th>
+            <th class="th-stmt">Statement</th>
+            <th class="th-opt">1</th>
+            <th class="th-opt">2</th>
+            <th class="th-opt">3</th>
+            <th class="th-opt">4</th>
+          </tr>
+        </thead>
+        <tbody id="stmtBody">
+          <!-- JS will populate -->
+        </tbody>
+      </table>
+
+      <div class="submit-section">
+        <button type="submit" class="btn-submit" id="submitBtn">Submit Survey</button>
+        <p class="footer-note">Thank you for your participation. Your response will be kept confidential.</p>
+      </div>
+
+    </form>
+
+    <!-- THANK-YOU STATE -->
+    <div id="thankyou">
+      <div class="ty-icon">✓</div>
+      <h2>Thank you!</h2>
+      <p>Your response has been recorded successfully.<br>
+         Your participation helps improve attendance management at STI College Bacoor.</p>
+      <button class="btn-another" onclick="resetForm()">Submit Another Response</button>
+    </div>
+
+  </div><!-- /body -->
+</div><!-- /page -->
+
+<script>
+  /* ── DATA ────────────────────────────────────────────── */
+  const SECTIONS = [
+    'ICT401A','ICT402A','ICT401P','ICT402P',
+    'STEM401A','STEM402A','STEM401P','STEM402P',
+    'ABM401A','ABM402A','ABM401P','ABM402P',
+    'TOP401A','TOP402A','TOP401P','TOP402P'
+  ];
+
+  const STATEMENTS = [
+    { n:1,  text: "The current attendance checking takes too much time at the beginning of class." },
+    { n:2,  text: "Attendance checking sometimes delays the start of lessons." },
+    { n:3,  text: "I have experienced errors in my attendance record (e.g., marked absent when present)." },
+    { n:4,  text: "It is difficult to verify or confirm my attendance record when needed." },
+    { n:5,  text: "The current attendance system is efficient.", reverse: true },
+    { n:6,  text: "A QR code-based attendance system would make attendance checking faster." },
+    { n:7,  text: "A QR-based system would reduce attendance recording errors." },
+    { n:8,  text: "Presenting my school ID for QR scanning would be convenient." },
+    { n:9,  text: "I believe an automated attendance system would be more reliable than the current method." },
+    { n:10, text: "I would prefer a QR code-based attendance system over the current attendance process." }
+  ];
+
+  /* ── BUILD SECTION GRID ──────────────────────────────── */
+  const grid = document.getElementById('sectionGrid');
+  SECTIONS.forEach(s => {
+    const lbl = document.createElement('label');
+    lbl.className = 'sec-opt';
+    lbl.innerHTML = `<input type="checkbox" name="section" value="${s}"> ${s}`;
+    lbl.querySelector('input').addEventListener('change', function(){
+      lbl.classList.toggle('checked', this.checked);
+    });
+    grid.appendChild(lbl);
+  });
+
+  /* ── BUILD STATEMENT ROWS ────────────────────────────── */
+  const tbody = document.getElementById('stmtBody');
+  STATEMENTS.forEach(({ n, text, reverse }) => {
+    const tr = document.createElement('tr');
+    if (reverse) tr.classList.add('reverse');
+    tr.dataset.q = n;
+    const suffix = reverse ? ' <em style="font-size:11px;color:#888">(reverse-coded)</em>' : '';
+    tr.innerHTML = `
+      <td class="td-no">${n}</td>
+      <td class="td-stmt">${text}${suffix}</td>
+      ${[1,2,3,4].map(v => `
+        <td class="td-opt">
+          <input type="radio" name="q${n}" value="${v}" aria-label="Q${n} - ${v}">
+        </td>`).join('')}
+    `;
+    tbody.appendChild(tr);
+  });
+
+  /* ── FORM SUBMIT ─────────────────────────────────────── */
+  document.getElementById('surveyForm').addEventListener('submit', function(e){
+    e.preventDefault();
+
+    // Clear previous validation
+    document.querySelectorAll('.unanswered').forEach(r => r.classList.remove('unanswered'));
+
+    // Validate all questions answered
+    let allAnswered = true;
+    let firstMissing = null;
+    STATEMENTS.forEach(({ n }) => {
+      const answered = document.querySelector(`input[name="q${n}"]:checked`);
+      if (!answered) {
+        allAnswered = false;
+        const row = document.querySelector(`tr[data-q="${n}"]`);
+        row.classList.add('unanswered');
+        if (!firstMissing) firstMissing = row;
+      }
+    });
+
+    if (!allAnswered) {
+      firstMissing.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    // Collect data
+    const data = {
+      timestamp: new Date().toLocaleString('en-PH'),
+      name: document.getElementById('name').value.trim() || '(Anonymous)',
+      sections: [...document.querySelectorAll('input[name="section"]:checked')].map(i => i.value).join(', ') || '(Not selected)',
+    };
+    STATEMENTS.forEach(({ n }) => {
+      data[`q${n}`] = document.querySelector(`input[name="q${n}"]:checked`).value;
+    });
+
+    // Save to localStorage (offline storage)
+    saveResponse(data);
+
+    // Show thank you
+    document.getElementById('surveyForm').style.display = 'none';
+    const ty = document.getElementById('thankyou');
+    ty.style.display = 'flex';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  /* ── LOCAL STORAGE SAVE ──────────────────────────────── */
+  function saveResponse(data) {
+    const KEY = 'sti_survey_responses';
+    const existing = JSON.parse(localStorage.getItem(KEY) || '[]');
+    existing.push(data);
+    localStorage.setItem(KEY, JSON.stringify(existing));
+    console.log('[Survey] Response saved. Total:', existing.length);
+  }
+
+  /* ── RESET ───────────────────────────────────────────── */
+  function resetForm() {
+    document.getElementById('surveyForm').reset();
+    document.getElementById('name').value = '';
+    document.querySelectorAll('.sec-opt').forEach(l => l.classList.remove('checked'));
+    document.querySelectorAll('.unanswered').forEach(r => r.classList.remove('unanswered'));
+    document.getElementById('thankyou').style.display = 'none';
+    document.getElementById('surveyForm').style.display = '';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>
