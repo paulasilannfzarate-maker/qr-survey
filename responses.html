@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Survey Responses – STI College Bacoor</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --blue: #003087; --gold: #f0a500; --light: #eaf0fb;
+    --border: #c4d3ee; --text: #12213a; --bg: #f2f5fc;
+  }
+  body { font-family: Arial, sans-serif; background: var(--bg); color: var(--text); padding: 16px; }
+  .page { max-width: 1100px; margin: 0 auto; }
+
+  .hdr {
+    background: var(--blue); color: white; padding: 18px 24px;
+    border-radius: 6px 6px 0 0; border-bottom: 4px solid var(--gold);
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: gap;
+    gap: 12px;
+  }
+  .hdr h1 { font-size: 17px; }
+  .hdr-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+
+  .btn {
+    padding: 8px 18px; border: none; border-radius: 4px; cursor: pointer;
+    font-size: 13px; font-weight: bold; font-family: inherit; transition: opacity .2s;
+  }
+  .btn:hover { opacity: .85; }
+  .btn-gold   { background: var(--gold); color: #111; }
+  .btn-danger { background: #c0392b; color: white; }
+  .btn-blue   { background: #1a5fc4; color: white; }
+
+  .stats-bar {
+    background: white; border: 1px solid var(--border); border-top: none;
+    padding: 14px 24px; display: flex; gap: 24px; flex-wrap: wrap;
+    font-size: 13px; color: #555;
+  }
+  .stats-bar strong { color: var(--blue); font-size: 20px; display: block; }
+
+  .table-wrap {
+    overflow-x: auto;
+    background: white;
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 900px; }
+  thead tr { background: var(--blue); color: white; }
+  thead th { padding: 9px 8px; text-align: center; border: 1px solid #002070; white-space: nowrap; }
+  thead th.th-left { text-align: left; }
+  tbody tr:nth-child(odd)  { background: white; }
+  tbody tr:nth-child(even) { background: var(--light); }
+  tbody tr:hover { background: #d4e3fc; }
+  tbody td { padding: 8px; border: 1px solid var(--border); text-align: center; }
+  tbody td.td-left { text-align: left; }
+  .badge {
+    display: inline-block; padding: 2px 8px; border-radius: 10px;
+    font-size: 11px; font-weight: bold;
+    background: var(--light); color: var(--blue);
+  }
+
+  .empty-state {
+    padding: 60px 24px; text-align: center; color: #8a9ab8;
+    background: white; border: 1px solid var(--border); border-top: none;
+    border-radius: 0 0 6px 6px;
+  }
+  .empty-state h2 { font-size: 18px; margin-bottom: 8px; }
+  .empty-state p { font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="hdr">
+    <h1>📋 STI College Bacoor — Survey Responses</h1>
+    <div class="hdr-btns">
+      <button class="btn btn-blue" onclick="location.href='survey.html'">← Back to Survey</button>
+      <button class="btn btn-gold" onclick="downloadCSV()">⬇ Export CSV</button>
+      <button class="btn btn-danger" onclick="clearAll()">🗑 Clear All</button>
+    </div>
+  </div>
+
+  <div class="stats-bar" id="statsBar">
+    <div><strong id="countTotal">0</strong>Total Responses</div>
+    <div><strong id="countToday">0</strong>Today</div>
+    <div><strong id="avgScore">—</strong>Avg Score (All)</div>
+  </div>
+
+  <div id="tableWrap" class="table-wrap">
+    <div class="empty-state" id="emptyState">
+      <h2>No responses yet</h2>
+      <p>Responses will appear here after students submit the survey.</p>
+    </div>
+    <table id="responseTable" style="display:none">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th class="th-left">Timestamp</th>
+          <th class="th-left">Name</th>
+          <th class="th-left">Section</th>
+          <th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th><th>Q5</th>
+          <th>Q6</th><th>Q7</th><th>Q8</th><th>Q9</th><th>Q10</th>
+          <th>Total</th><th>Mean</th>
+        </tr>
+      </thead>
+      <tbody id="responseBody"></tbody>
+    </table>
+  </div>
+
+</div>
+
+<script>
+  const KEY = 'sti_survey_responses';
+
+  function load() {
+    return JSON.parse(localStorage.getItem(KEY) || '[]');
+  }
+
+  function render() {
+    const data = load();
+    const tbody = document.getElementById('responseBody');
+    const table = document.getElementById('responseTable');
+    const empty = document.getElementById('emptyState');
+    tbody.innerHTML = '';
+
+    if (data.length === 0) {
+      table.style.display = 'none';
+      empty.style.display = '';
+      document.getElementById('countTotal').textContent = '0';
+      document.getElementById('avgScore').textContent = '—';
+      return;
+    }
+
+    empty.style.display = 'none';
+    table.style.display = '';
+
+    const today = new Date().toLocaleDateString('en-PH');
+    let todayCount = 0;
+    let allScores = [];
+
+    data.forEach((r, i) => {
+      const scores = [1,2,3,4,5,6,7,8,9,10].map(n => parseInt(r[`q${n}`] || 0));
+      const total = scores.reduce((a,b) => a+b, 0);
+      const mean  = (total / scores.length).toFixed(2);
+      allScores.push(...scores);
+      if (r.timestamp && r.timestamp.includes(today)) todayCount++;
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${i+1}</td>
+        <td class="td-left" style="font-size:11px">${r.timestamp || '—'}</td>
+        <td class="td-left">${r.name || '—'}</td>
+        <td class="td-left"><span class="badge">${r.sections || '—'}</span></td>
+        ${scores.map(s => `<td>${s || '—'}</td>`).join('')}
+        <td><strong>${total}</strong></td>
+        <td>${mean}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    document.getElementById('countTotal').textContent = data.length;
+    document.getElementById('countToday').textContent = todayCount;
+    const globalMean = allScores.length ? (allScores.reduce((a,b)=>a+b,0)/allScores.length).toFixed(2) : '—';
+    document.getElementById('avgScore').textContent = globalMean;
+  }
+
+  function downloadCSV() {
+    const data = load();
+    if (data.length === 0) { alert('No responses to export.'); return; }
+
+    const headers = ['#','Timestamp','Name','Sections',
+      'Q1','Q2','Q3','Q4','Q5','Q6','Q7','Q8','Q9','Q10','Total','Mean'];
+    const rows = data.map((r, i) => {
+      const scores = [1,2,3,4,5,6,7,8,9,10].map(n => parseInt(r[`q${n}`]||0));
+      const total = scores.reduce((a,b)=>a+b,0);
+      const mean  = (total/scores.length).toFixed(2);
+      return [i+1, r.timestamp, r.name, r.sections, ...scores, total, mean]
+        .map(v => `"${String(v||'').replace(/"/g,'""')}"`).join(',');
+    });
+
+    const csv = [headers.join(','), ...rows].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `STI_Survey_Responses_${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+  }
+
+  function clearAll() {
+    if (!confirm(`Delete all ${load().length} response(s)? This cannot be undone.`)) return;
+    localStorage.removeItem(KEY);
+    render();
+  }
+
+  render();
+</script>
+</body>
+</html>
